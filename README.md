@@ -10,7 +10,7 @@ at various resolutions.
 dvue is intended to remain as a standalone html file with the only external resource being jquery.  It is
 intended to remain image free, using CSS to render devices and viewports.
 
-# todo
+## todo
  * add android phones
  * add ipad
  * add android tablets
