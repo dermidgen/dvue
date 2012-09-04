@@ -301,11 +301,15 @@
 				}
 			}
 
-			var url = document.location.href + '?autoload=' + autoload;
-			if (wtarget !== null) url += '&url=' + escape(wtarget);
+			var url = document.location.origin + document.location.pathname + '?autoload=' + autoload;
+			var murl = url;
+			if (wtarget !== null) {
+				url += '&url=' + wtarget;
+				murl += '&url=' + wtarget;
+			}
 
 			$('.sharing input[name="page_url"]').val(url)
-			$('.sharing .email').attr('href','mailto:?subject=Check it out on dvue&body=I wanted to share this dvue with you: '+escape(url));
+			$('.sharing .email').attr('href','mailto:?subject=Check it out on dvue&body=I wanted to share this dvue with you: '+escape(murl));
 		}
 
 		function load(address)
@@ -352,10 +356,29 @@
 			$('.body',$('.device.'+device)).css({top:y,left:x}).css('-webkit-transform','scale('+s/10+')');
 		}
 
+		function getQueryString() {
+			var result = {}, queryString = location.search.substring(1),
+			re = /([^&=]+)=([^&]*)/g, m;
+
+			while (m = re.exec(queryString)) {
+			result[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+			}
+
+			return result;
+		}
+
 		$(document).ready(function(){
 			$.each(devices,function(index,item){
 				scale(item.scale,index);
 			});
+
+			var url = getQueryString()["url"];
+			var autoload = getQueryString()["autoload"];
+
+			if (url && autoload) {
+				load(url);
+				$('#wtarget').val(url);
+			}
 		});
 
 	</script>
