@@ -21,23 +21,101 @@
 			margin-right: 0.4em;
 		}
 
-		#wtarget { width: 80%;}
+		#wtarget { width: 40%;}
 		body > header .toolbar { clear:both;}
 		body > header .toolbar .advanced {
-			-webkit-transition: opacity .2s, height .2s, margin .2s;
+			-webkit-transition: opacity .2s, height .2s, margin .2s, padding .2s;
 			height:0px;
 			overflow:hidden;
 			opacity: 0;
 			margin-top: 0;
+			padding-top: 0;
 			font-size:0.8em;
 		}
 		body > header:hover .toolbar .advanced {
-			height: 80px;
+			min-height: 25px;
 			opacity: 1;
 			margin-top: 10px;
+			padding-top: 10px;
+			border-top: 1px solid #ccc;
 		}
 
 		input[type='radio'] { margin:0 2px;}
+
+		.sharing {
+			width: 300px;
+			height: 300px;
+			position: absolute;
+			top: -182px;
+			right: 0px;
+			-webkit-transform: rotate(45deg) scale(0.4);
+			-webkit-transition: all .2s;
+			z-index: 99;
+		}
+
+		.sharing:hover {
+			top: -82px;
+			right: 0px;
+			-webkit-transform: rotate(0deg);
+		}
+
+		.sharing .tag {
+			position:absolute;
+			top: 230px;
+			left: 190px;
+			opacity:1;
+			font-size: 3em;
+			font-weight: bold;
+			-webkit-transition: all .2s;
+			-webkit-transform: rotate(-45deg);
+		}
+
+		.sharing .content {
+			top: 100px;
+			left: 65px;
+			position:absolute;
+			opacity:0;
+			-webkit-transition: all .2s;
+		}
+
+		.sharing:hover .content { opacity:1; }
+		.sharing:hover .tag { opacity:0; }
+
+		.sharing .background{
+			height: 300px;
+			width: 300px;
+			background: #de00c7;
+			position: absolute;
+			margin: 30px 0 30px 30px;
+		}
+
+
+		.sharing .background:before {
+			content: "";
+			position: absolute;
+			-moz-transform: rotate(30deg);
+			-webkit-transform: rotate(30deg);
+			-ms-transform: rotate(30deg);
+			-o-transform: rotate(30deg);
+			transform: rotate(30deg);
+			height: 300px;
+			width: 300px;
+			background: #de00c7;
+		}
+
+		.sharing .background:after {
+			content: "";
+			position: absolute;
+			-moz-transform: rotate(-30deg);
+			-webkit-transform: rotate(-30deg);
+			-ms-transform: rotate(-30deg);
+			-o-transform: rotate(-30deg);
+			transform: rotate(-30deg);
+			height: 300px;
+			width: 300px;
+			background: #de00c7;
+		}
+
 
 		.column { float: left;}
 
@@ -211,6 +289,25 @@
 			}
 		};
 		
+		function update_url()
+		{
+			var wtarget = null;
+			var autoload = false;
+
+			if ($('.sharing input[name="include_url"]').is(':checked')) {
+				wtarget = $('#wtarget').val();
+				if ($('.sharing input[name="autoload_url"]').is(':checked')) {
+					autoload = true;
+				}
+			}
+
+			var url = document.location.href + '?autoload=' + autoload;
+			if (wtarget !== null) url += '&url=' + escape(wtarget);
+
+			$('.sharing input[name="page_url"]').val(url)
+			$('.sharing .email').attr('href','mailto:?subject=Check it out on dvue&body=I wanted to share this dvue with you: '+escape(url));
+		}
+
 		function load(address)
 		{
 			$.each($('.viewport'),function(i,val){
@@ -267,18 +364,26 @@
 	<header>
 		<h1>DVUE</h1>
 		<h2>Mobile device testing for responsive layouts</h2>
+		<div class="sharing" onmouseover="update_url();">
+			<div class="background"></div>
+			<div class="content">
+				<h3>Share dvue!</h3>
+				<label>Include URL</label><input type="checkbox" name="include_url" checked onchange="update_url();"/><br>
+				<label>Autoload URL</label><input type="checkbox" name="autoload_url" checked onchange="update_url();"/><br>
+				<input type="text" name="page_url" value=""/><br>
+				<a class="email" target="_blank" href="#">Email</a> | <a href="#">Twitter</a> | <a href="#">Google+</a>
+			</div>
+			<div class="tag">Share!</div>
+		</div>
 		<div class="toolbar">
 			<form action="" name="t" onsubmit="load($('#wtarget').val()); return false;">
 			<label for="wtarget">Web Address:</label>
 			<input type="text" id="wtarget" onblur="load(this.value);" value="http://forefathersgroup.com/"/>
 			</form>
 			<div class="advanced">
-				<fieldset>
-					<legend>Device Options</legend>
-					<button>Add Device</button> &nbsp; 
-					<button>Flip all devices</button> &nbsp;
-					<label>Scale all devices</label> <input type="text" class="scale" id="global_scale" maxlength="2" size="2" value="7" onkeyup="scale(this.value, null);"/> &nbsp;
-				</fieldset>
+				<button>Add Device</button> &nbsp; 
+				<button>Flip all devices</button> &nbsp;
+				<label>Scale all devices</label> <input type="text" class="scale" id="global_scale" maxlength="2" size="2" value="7" onkeyup="scale(this.value, null);"/> &nbsp;
 			</div>
 		</div>
 	</header>
