@@ -21,8 +21,21 @@
 			margin-right: 0.4em;
 		}
 
+		#wtarget { width: 80%;}
 		body > header .toolbar { clear:both;}
-		body > header .toolbar input { width: 80%;}
+		body > header .toolbar .advanced {
+			-webkit-transition: opacity .2s, height .2s, margin .2s;
+			height:0px;
+			overflow:hidden;
+			opacity: 0;
+			margin-top: 0;
+			font-size:0.8em;
+		}
+		body > header:hover .toolbar .advanced {
+			height: 80px;
+			opacity: 1;
+			margin-top: 10px;
+		}
 
 		input[type='radio'] { margin:0 2px;}
 
@@ -181,6 +194,7 @@
 
 	</style>
 	<script src="http://code.jquery.com/jquery-1.8.0.min.js" type="text/javascript"></script>
+	<script src="https://raw.github.com/dermidgen/ook/master/ook/ook-min.js" type="text/javascript"></script>
 	<script language="javascript">
 
 		var devices = {
@@ -201,6 +215,27 @@
 			$.each($('.viewport'),function(i,val){
 				val.src = address;
 			});
+		}
+
+		function orient(orientation,device)
+		{
+			device = $(device);
+			if (orientation === null) {
+				orientation = (device.hasClass('portrait')) ? 'landscape' : 'portrait';
+			}
+			console.info(orientation);
+
+			if (device.hasClass('portrait')) {
+				device.removeClass('portrait');
+				device.css('-webkit-transform','rotate(0deg)');
+				$('.viewport',device).css('-webkit-transform','rotate(0deg)');
+			}
+			if (device.hasClass('landscape')) {
+				device.removeClass('landscape');
+				device.css('-webkit-transform','rotate(90deg)');
+				$('.viewport',device).css('-webkit-transform','rotate(-90deg)');
+			}
+			device.addClass(orientation);
 		}
 
 		function scale(value,device)
@@ -236,6 +271,14 @@
 			<label for="wtarget">Web Address:</label>
 			<input type="text" id="wtarget" onblur="load(this.value);" value="http://forefathersgroup.com/"/>
 			</form>
+			<div class="advanced">
+				<fieldset>
+					<legend>Device Options</legend>
+					<button>Add Device</button> &nbsp; 
+					<button>Flip all devices</button> &nbsp;
+					<label>Scale all devices</label> <input type="text" class="scale" id="global_scale" maxlength="2" size="2" value="7" onkeyup="scale(this.value, null);"/> &nbsp;
+				</fieldset>
+			</div>
 		</div>
 	</header>
 	<!--
@@ -251,13 +294,13 @@
 		</footer>
 	</div>
 	-->
-	<div class="device iphone fourg">
+	<div class="device iphone fourg portrait">
 		<div class="tools">
 			<label for="iphone_scale"><b>Scale:</b></label>
 			<input type="text" class="scale" id="iphone_scale" value="7" onkeyup="scale(this.value, 'iphone');"/><br>
 
 			<label><b>Orientation:</b></label><br>
-			<input type="radio" name="iphone_orientation" id="iphone_orientation_1" value="portrait" checked><label for="iphone_orientation_1">Portrait</label><br> 
+			<input type="radio" name="iphone_orientation" id="iphone_orientation_1" value="portrait" checked onclick="orient(null,this.parentNode.parentNode);"><label for="iphone_orientation_1">Portrait</label><br> 
 			<input type="radio" name="iphone_orientation" id="iphone_orientation_2" value="landscape"><label for="iphone_orientation_2">Landscape</label> 
 		</div>
 		<div class="body">
@@ -272,7 +315,7 @@
 			</footer>
 		</div>
 	</div>
-	<div class="device ipad">
+	<div class="device ipad portrait">
 		<div class="tools">
 			<label for="ipad_scale"><b>Scale:</b></label>
 			<input type="text" class="scale" id="ipad_scale" value="7" onkeyup="scale(this.value, 'ipad');"/><br>
