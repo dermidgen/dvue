@@ -14,12 +14,11 @@ intended to remain image free, using CSS to render devices and viewports, and ma
  * add android phones
  * add android tablets
  * add device chooser menu
- * add landscape resolutions
  * add device orientation control
- * add support for URL history
  * add support to intercept ctrl-r refresh and redirect to all viewports
 
 ## todo v0.2
+ * add support for URL history
  * add support for local storage of URL history
  * add support for layout profiles
  * add support for local storage of layout profiles
