@@ -8,14 +8,19 @@ alternate user-agent support, or any other fanciness.  This is purely a containe
 at various resolutions.
 
 dvue is intended to remain as a standalone html file with the only external resource being jquery.  It is
-intended to remain image free, using CSS to render devices and viewports.
+intended to remain image free, using CSS to render devices and viewports, and maintain no server-side dependencies.
 
-## todo
+## todo v0.1
  * add android phones
- * add ipad
  * add android tablets
  * add device chooser menu
  * add landscape resolutions
  * add device orientation control
  * add support for URL history
  * add support to intercept ctrl-r refresh and redirect to all viewports
+
+## todo v0.2
+ * add support for local storage of URL history
+ * add support for layout profiles
+ * add support for local storage of layout profiles
+ * add Chrome Store deployment target
