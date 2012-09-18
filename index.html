@@ -555,10 +555,11 @@
 				orient(null,this.parentNode.parentNode);
 			});
 
-			var url = getQueryString()["url"];
-			var autoload = getQueryString()["autoload"];
+			var autoload = true;
+			var url = getQueryString()["url"] || $('#wtarget').val();
+			if (getQueryString()["autoload"] == 'false') autoload = false;
 
-			if (url && autoload) {
+			if (autoload) {
 				load(url);
 				$('#wtarget').val(url);
 			}
