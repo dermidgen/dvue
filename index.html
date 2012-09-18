@@ -319,6 +319,29 @@
 			});
 		}
 
+		function transform(em,options)
+		{
+			// Thanks to http://css-tricks.com/get-value-of-css-rotation-through-javascript/
+
+			var t = $(em).css('-webkit-transform');
+			var ts = (t == 'none') ? ['1','0','0','1','0','0'] : t.slice(7,t.length-1).split(',');
+
+			if (!options) return ts;
+			var a = parseFloat(ts[0]);
+			var b = parseFloat(ts[1]);
+			var c = parseFloat(ts[2]);
+			var d = parseFloat(ts[3]);
+
+			var scale = (!isNaN(options.scale)) ? options.scale : Math.sqrt(a*a + b*b);
+			var angle = (!isNaN(options.rotate)) ? options.rotate : Math.round(Math.atan2(b,a) * (180/Math.PI));
+
+
+			var s_scale = 'scale('+scale+')';
+			var s_rotate = 'rotate('+angle+'deg)';
+
+			$(em).css('-webkit-transform',s_scale + ' ' + s_rotate);
+		}
+
 		function orient(orientation,device)
 		{
 			device = $(device);
@@ -330,23 +353,28 @@
 				orientation = (co() == 'portrait') ? 'landscape' : 'portrait';
 			}
 
-			console.info(co(), orientation);
-
 			switch(orientation)
 			{
 				case "portrait":
 					device.removeClass('landscape');
-					$('.body',device).css('-webkit-transform', 'rotate(0deg');
-					$('.viewport',device).css('-webkit-transform','rotate(0deg)');
+					transform($('.body',device),{rotate: 0});
+					transform($('.viewport',device),{rotate: 0});
 				break;
 				case "landscape":
 					device.removeClass('portrait');
-					$('.body',device).css('-webkit-transform','rotate(90deg)');
-					$('.viewport',device).css('-webkit-transform','rotate(-90deg)');
-					//var t = $('.body',device).css('-webkit-transform');
-					//console.info(t);
+					transform($('.body',device),{rotate: 90});
+					transform($('.viewport',device),{rotate: -90});
 				break;
 			}
+
+			// resize the container
+			var w = device.width();
+			var h = device.height();
+			device.width(h);
+			device.height(w);
+
+			// reset xy of the device body
+			//$('.body',$('.device.'+device)).css({top:0,left:0})
 
 			device.addClass(orientation);
 		}
