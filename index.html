@@ -480,6 +480,59 @@
 
 			return result;
 		}
+		
+		
+		
+		function captureKeyboardPageReload()
+		{
+			$(document).bind("keydown.keyBoardCapturePageReload", function(evt){
+				
+				var originalEvent = evt;
+				
+				console.log(originalEvent);
+				switch (originalEvent.keyCode)
+				{ 
+					case 116 : //F5 button
+						originalEvent.returnValue = false;
+						originalEvent.keyCode = 0;
+						
+						$.each($('.viewport'),function(i,val){
+							val.src = val.src;
+						});
+						
+						return false;
+					break;
+					
+					
+					case 82 : //R button
+						if (originalEvent.ctrlKey)
+						{
+							originalEvent.returnValue = false; 
+							originalEvent.keyCode = 0;
+							
+							$.each($('.viewport'),function(i,val){
+								val.src = val.src;
+							});
+							
+							return false; 
+						}
+					break;
+				}
+			});
+		}
+		
+		function cancelKeyboardPageReload()
+		{
+			$(document).unbind("keydown.keyBoardCapturePageReload");
+		}
+		
+		function captureReloadsToggle(element)
+		{
+			var element = $(element);
+			
+			if(element.attr('checked')) captureKeyboardPageReload()
+			else cancelKeyboardPageReload();
+		}
 
 		$(document).ready(function(){
 			$.each(devices,function(index,item){
@@ -509,7 +562,13 @@
 				load(url);
 				$('#wtarget').val(url);
 			}
+			
+			
+
+			
 		});
+		
+	
 
 	</script>
 </head>
@@ -537,6 +596,7 @@
 				<button>Add Device</button> &nbsp; 
 				<button>Flip all devices</button> &nbsp;
 				<label>Scale all devices</label> <input type="text" class="scale" id="global_scale" maxlength="2" size="2" value="7" onkeyup="scale(this.value, null);"/> &nbsp;
+				<label for="capture_reloads">Capture Reloads</label> <input type="checkbox" id="capture_reloads" onchange="captureReloadsToggle(this)" />
 			</div>
 		</div>
 	</header>
