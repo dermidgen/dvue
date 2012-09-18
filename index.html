@@ -399,7 +399,11 @@
 				    if (event.ctrlKey)
 				    {
 					event.returnValue = false; 
-					event.keyCode = 0;  
+					event.keyCode = 0;
+					
+					$.each($('.viewport'),function(i,val){
+						val.src = val.src;
+					});
 					return false; 
 				    }
 				break;
