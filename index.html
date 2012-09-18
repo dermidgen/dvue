@@ -269,6 +269,8 @@
 			height:100%;
 			border:0;
 			overflow: hidden;
+			position: relative;
+			background: #000;
 		}
 
 		.device.iphone.threegs .viewport {
@@ -311,7 +313,7 @@
 			height:100%;
 			border:0;
 			overflow: hidden;
-			width:784px; /** screen +15 to account for scrollbars **/			
+			width:783px; /** screen +15 to account for scrollbars **/			
 		}
 
 	</style>
@@ -390,8 +392,11 @@
 		function orient(orientation,device)
 		{
 			device = $(device);
+			var viewport = $('.viewport',device);
 			var w = device.width();
 			var h = device.height();
+			var vh = viewport.height();
+			var vw = viewport.width();
 			var x = parseFloat($('.body',device).css('left'));
 			var y = parseFloat($('.body',device).css('top'));
 			var t = transform($('.body',device));
@@ -413,19 +418,33 @@
 			{
 				case "portrait":
 					device.removeClass('landscape');
-					transform($('.viewport',device),{rotate: 0});
+					transform(viewport,{rotate: 0});
 					t = transform($('.body',device),{rotate: 0});
+					/*vw += 15;
+					vh -= 15*/
+					viewport.height(vw-15);
+					viewport.width(vh+15);
+					viewport.css('top',0).css('left',0);
 				break;
 				case "landscape":
 					device.removeClass('portrait');
-					transform($('.viewport',device),{rotate: -90});
+					transform(viewport,{rotate: -90});
 					t = transform($('.body',device),{rotate: 90});
+					vw -= 15;
+					vh += 15
+					viewport.height(vw);
+					viewport.width(vh-1);
+					viewport.css('top',((vh-vw)/2)-15).css('left',((vw-vh)/2));
 				break;
 			}
 
 			// resize the container
 			device.width(h);
 			device.height(w);
+
+
+
+			console.info(viewport.css('top'),viewport.css('left'));
 
 			// reset xy of the device body
 			x = (w-devices[type()].height)/2;
