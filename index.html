@@ -375,13 +375,12 @@
 		function captureKeyboardPageReload()
 		{
 			$(document).bind("keydown.keyBoardCapturePageReload", function(evt){
-				
-				var originalEvent = evt;
-				
-				console.log(originalEvent);
+
+				var originalEvent = evt.originalEvent;
+
 				switch (originalEvent.keyCode)
 				{ 
-					case 116 : //F5 button
+					case 116: //F5 button
 						originalEvent.returnValue = false;
 						originalEvent.keyCode = 0;
 						
@@ -393,7 +392,7 @@
 					break;
 					
 					
-					case 82 : //R button
+					case 82: //R button
 						if (originalEvent.ctrlKey)
 						{
 							originalEvent.returnValue = false; 
