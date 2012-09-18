@@ -137,7 +137,7 @@
 
 		.device .tools {
 			position:absolute;
-			width: 100px;
+			width: 130px;
 			right: 5px;
 			top: 10px;
 			background-color: #aaa;
@@ -153,12 +153,12 @@
 		}
 
 		.device:hover {
-			margin-right: 125px;
+			margin-right: 145px;
 		}
 
 		.device:hover .tools {
 			opacity: .3;
-			right: -115px;
+			right: -145px;
 		}
 
 		.device .tools:hover {
@@ -167,6 +167,49 @@
 
 		.device .tools .scale {
 			width: 25px;
+		}
+
+		.device .tools .toggle {
+			cursor: pointer;
+		}
+
+		.device .tools .toggle .option {
+			border: 1px inset #ccc;
+			border-radius: 8px;
+			margin:0;
+			padding: 2px 4px;
+			cursor: pointer;
+			display: inline-block;
+		}
+
+		.device .tools .toggle .option.left {
+			border-top-right-radius: 0;
+			border-bottom-right-radius: 0;
+		}
+
+		.device .tools .toggle .option.right {
+			border-top-left-radius: 0;
+			border-bottom-left-radius: 0;
+		}
+
+		.device .tools .toggle.off .option.left {
+			background: #5EA563;
+			font-weight: bold;
+		}
+
+		.device .tools .toggle.off .option.right {
+			background: #ededed;
+			font-weight: normal;
+		}
+
+		.device .tools .toggle.on .option.left {
+			background: #ededed;
+			font-weight: normal;
+		}
+
+		.device .tools .toggle.on .option.right {
+			background: #5EA563;
+			font-weight: bold;
 		}
 
 		.device header .features {
@@ -340,11 +383,24 @@
 			var s_rotate = 'rotate('+angle+'deg)';
 
 			$(em).css('-webkit-transform',s_scale + ' ' + s_rotate);
+
+			return { scale: scale, rotate: angle };
 		}
 
 		function orient(orientation,device)
 		{
 			device = $(device);
+			var w = device.width();
+			var h = device.height();
+			var x = parseFloat($('.body',device).css('left'));
+			var y = parseFloat($('.body',device).css('top'));
+			var t = transform($('.body',device));
+
+			var type = function() {
+				if (device.hasClass('iphone')) return 'iphone';
+				if (device.hasClass('ipad')) return 'ipad';
+			};
+
 			var co = function() {  // current orientation
 				return (device.hasClass('portrait')) ? 'portrait' : 'landscape'
 			};
@@ -357,24 +413,24 @@
 			{
 				case "portrait":
 					device.removeClass('landscape');
-					transform($('.body',device),{rotate: 0});
 					transform($('.viewport',device),{rotate: 0});
+					t = transform($('.body',device),{rotate: 0});
 				break;
 				case "landscape":
 					device.removeClass('portrait');
-					transform($('.body',device),{rotate: 90});
 					transform($('.viewport',device),{rotate: -90});
+					t = transform($('.body',device),{rotate: 90});
 				break;
 			}
 
 			// resize the container
-			var w = device.width();
-			var h = device.height();
 			device.width(h);
 			device.height(w);
 
 			// reset xy of the device body
-			//$('.body',$('.device.'+device)).css({top:0,left:0})
+			x = (w-devices[type()].height)/2;
+			y = (h-devices[type()].width)/2;
+			$('.body',device).css({top:x,left:y});
 
 			device.addClass(orientation);
 		}
@@ -417,6 +473,16 @@
 
 			});
 
+			$('.toggle').click(function(){
+				var e = $(this);
+				if (e.hasClass('off')) e.removeClass('off').addClass('on');
+				else if (e.hasClass('on')) e.removeClass('on').addClass('off');
+			});
+
+			$('.toggle.orientation').click(function(){
+				orient(null,this.parentNode.parentNode);
+			});
+
 			var url = getQueryString()["url"];
 			var autoload = getQueryString()["autoload"];
 
@@ -455,28 +521,16 @@
 			</div>
 		</div>
 	</header>
-	<!--
-	<div class="device iphone threegs">
-		<header>
-			<div class="features"></div>
-		</header>
-		<div class="screen">
-			<iframe class="viewport" scrolling="yes"></iframe>
-		</div>
-		<footer>
-			<div class="features"></div>
-		</footer>
-	</div>
-	-->
 	<div class="column">
 		<div class="device iphone fourg portrait">
 			<div class="tools">
 				<label for="iphone_scale"><b>Scale:</b></label>
 				<input type="text" class="scale" id="iphone_scale" value="7" onkeyup="scale(this.value, 'iphone');"/><br>
 
-				<label><b>Orientation:</b></label><br>
-				<input type="radio" name="iphone_orientation" id="iphone_orientation_1" value="portrait" checked><label for="iphone_orientation_1">Portrait</label><br> 
-				<input type="radio" name="iphone_orientation" id="iphone_orientation_2" value="landscape"><label for="iphone_orientation_2">Landscape</label> 
+				<label><b>Orientation:</b></label>
+				<div class="toggle off orientation">
+					<div class="option left">Portrait</div><div class="option right">Landscape</div>
+				</div> 
 			</div>
 			<div class="body">
 				<header>
@@ -495,9 +549,10 @@
 				<label for="iphone_scale"><b>Scale:</b></label>
 				<input type="text" class="scale" id="iphone_scale" value="7" onkeyup="scale(this.value, 'iphone');"/><br>
 
-				<label><b>Orientation:</b></label><br>
-				<input type="radio" name="iphone_orientation" id="iphone_orientation_1" value="portrait" checked><label for="iphone_orientation_1">Portrait</label><br> 
-				<input type="radio" name="iphone_orientation" id="iphone_orientation_2" value="landscape"><label for="iphone_orientation_2">Landscape</label> 
+				<label><b>Orientation:</b></label>
+				<div class="toggle off orientation">
+					<div class="option left">Portrait</div><div class="option right">Landscape</div>
+				</div> 
 			</div>
 			<div class="body">
 				<header>
@@ -518,9 +573,10 @@
 				<label for="ipad_scale"><b>Scale:</b></label>
 				<input type="text" class="scale" id="ipad_scale" value="7" onkeyup="scale(this.value, 'ipad');"/><br>
 
-				<label><b>Orientation:</b></label><br>
-				<input type="radio" name="ipad_orientation" id="ipad_orientation_1" value="portrait" checked><label for="ipad_orientation_1">Portrait</label><br> 
-				<input type="radio" name="ipad_orientation" id="ipad_orientation_2" value="landscape"><label for="ipad_orientation_2">Landscape</label> 
+				<label><b>Orientation:</b></label>
+				<div class="toggle off orientation">
+					<div class="option left">Portrait</div><div class="option right">Landscape</div>
+				</div> 
 			</div>
 			<div class="body">
 				<header>
@@ -541,9 +597,10 @@
 				<label for="ipad_scale"><b>Scale:</b></label>
 				<input type="text" class="scale" id="ipad_scale" value="7" onkeyup="scale(this.value, 'ipad');"/><br>
 
-				<label><b>Orientation:</b></label><br>
-				<input type="radio" name="ipad_orientation" id="ipad_orientation_1" value="portrait" checked><label for="ipad_orientation_1">Portrait</label><br> 
-				<input type="radio" name="ipad_orientation" id="ipad_orientation_2" value="landscape"><label for="ipad_orientation_2">Landscape</label> 
+				<label><b>Orientation:</b></label>
+				<div class="toggle off orientation">
+					<div class="option left">Portrait</div><div class="option right">Landscape</div>
+				</div> 
 			</div>
 			<div class="body">
 				<header>
