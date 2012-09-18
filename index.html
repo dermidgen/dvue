@@ -322,24 +322,32 @@
 		function orient(orientation,device)
 		{
 			device = $(device);
-			if (orientation === null) {
-				orientation = (device.hasClass('portrait')) ? 'landscape' : 'portrait';
-			}
-			console.info(orientation);
-			$('.body',device).css('-webkit-transform');
+			var co = function() {  // current orientation
+				return (device.hasClass('portrait')) ? 'portrait' : 'landscape'
+			};
 
-			if (device.hasClass('portrait')) {
-				device.removeClass('portrait');
-				var t = $('.body',device).css('-webkit-transform');
-				console.info(t);
-				$('.body',device).css('-webkit-transform', 'rotate(0deg');
-				$('.viewport',device).css('-webkit-transform','rotate(0deg)');
+			if (orientation === null) {
+				orientation = (co() == 'portrait') ? 'landscape' : 'portrait';
 			}
-			if (device.hasClass('landscape')) {
-				device.removeClass('landscape');
-				$('.body',device).css('-webkit-transform','rotate(90deg)');
-				$('.viewport',device).css('-webkit-transform','rotate(-90deg)');
+
+			console.info(co(), orientation);
+
+			switch(orientation)
+			{
+				case "portrait":
+					device.removeClass('landscape');
+					$('.body',device).css('-webkit-transform', 'rotate(0deg');
+					$('.viewport',device).css('-webkit-transform','rotate(0deg)');
+				break;
+				case "landscape":
+					device.removeClass('portrait');
+					$('.body',device).css('-webkit-transform','rotate(90deg)');
+					$('.viewport',device).css('-webkit-transform','rotate(-90deg)');
+					//var t = $('.body',device).css('-webkit-transform');
+					//console.info(t);
+				break;
 			}
+
 			device.addClass(orientation);
 		}
 
@@ -373,6 +381,12 @@
 		$(document).ready(function(){
 			$.each(devices,function(index,item){
 				scale(item.scale,index);
+			});
+
+			$('input[name="iphone_orientation"]').change(function(){
+
+				orient(null,this.parentNode.parentNode);
+
 			});
 
 			var url = getQueryString()["url"];
@@ -433,7 +447,7 @@
 				<input type="text" class="scale" id="iphone_scale" value="7" onkeyup="scale(this.value, 'iphone');"/><br>
 
 				<label><b>Orientation:</b></label><br>
-				<input type="radio" name="iphone_orientation" id="iphone_orientation_1" value="portrait" checked onclick="orient(null,this.parentNode.parentNode);"><label for="iphone_orientation_1">Portrait</label><br> 
+				<input type="radio" name="iphone_orientation" id="iphone_orientation_1" value="portrait" checked><label for="iphone_orientation_1">Portrait</label><br> 
 				<input type="radio" name="iphone_orientation" id="iphone_orientation_2" value="landscape"><label for="iphone_orientation_2">Landscape</label> 
 			</div>
 			<div class="body">
@@ -454,7 +468,7 @@
 				<input type="text" class="scale" id="iphone_scale" value="7" onkeyup="scale(this.value, 'iphone');"/><br>
 
 				<label><b>Orientation:</b></label><br>
-				<input type="radio" name="iphone_orientation" id="iphone_orientation_1" value="portrait" checked onclick="orient(null,this.parentNode.parentNode);"><label for="iphone_orientation_1">Portrait</label><br> 
+				<input type="radio" name="iphone_orientation" id="iphone_orientation_1" value="portrait" checked><label for="iphone_orientation_1">Portrait</label><br> 
 				<input type="radio" name="iphone_orientation" id="iphone_orientation_2" value="landscape"><label for="iphone_orientation_2">Landscape</label> 
 			</div>
 			<div class="body">
