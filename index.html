@@ -440,14 +440,17 @@
 					vh += 15
 					viewport.height(vw);
 					viewport.width(vh-1);
-					$('.viewport',device).css({top:((vh-vw)/2)-15}).css({left:vx((vw-vh)/2)});
+
+					var vy = ((vh-vw)/2)-15;
+					var vx = ((vw-vh)/2);
+					$('.viewport',device).css({top:vy}).css({left:vx});
 				break;
 			}
 
 			// resize the container
 			device.width(h);
 			device.height(w);
-			
+
 			// reset xy of the device body
 			x = (w-devices[type()].height)/2;
 			y = (h-devices[type()].width)/2;
