@@ -175,11 +175,12 @@
 
 		.device .tools .toggle .option {
 			border: 1px inset #ccc;
-			border-radius: 8px;
+			border-radius: 4px;
 			margin:0;
 			padding: 2px 4px;
 			cursor: pointer;
 			display: inline-block;
+			-webkit-transition: all .2s;
 		}
 
 		.device .tools .toggle .option.left {
@@ -315,6 +316,10 @@
 			overflow: hidden;
 			width:783px; /** screen +15 to account for scrollbars **/			
 		}
+
+		/** {
+			-webkit-transition: all 0 !important;
+		}**/
 
 	</style>
 	<script src="http://code.jquery.com/jquery-1.8.0.min.js" type="text/javascript"></script>
@@ -465,9 +470,9 @@
 			var x = (w-devices[device].width)/2;
 			var y = (h-devices[device].height)/2;
 
-			console.info(x,y);
 			$('.device.'+device).css({width:w,height:h});
-			$('.body',$('.device.'+device)).css({top:y,left:x}).css('-webkit-transform','scale('+s/10+')');
+			$('.body',$('.device.'+device)).css({top:y,left:x});
+			transform($('.body',$('.device.'+device)),{scale:s/10});
 		}
 
 		function getQueryString() {
