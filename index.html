@@ -215,6 +215,10 @@
 
 		.device header .features {
 		}
+
+		.device .viewport {
+			position: relative;
+		}
 	
 		/** iPhone **/
 		.device.iphone.threegs .body {
@@ -270,7 +274,6 @@
 			height:100%;
 			border:0;
 			overflow: hidden;
-			position: relative;
 			background: #000;
 		}
 
@@ -425,11 +428,9 @@
 					device.removeClass('landscape');
 					transform(viewport,{rotate: 0});
 					t = transform($('.body',device),{rotate: 0});
-					/*vw += 15;
-					vh -= 15*/
 					viewport.height(vw-15);
 					viewport.width(vh+15);
-					viewport.css('top',0).css('left',0);
+					viewport.css({top:0}).css({left:0});
 				break;
 				case "landscape":
 					device.removeClass('portrait');
@@ -439,18 +440,14 @@
 					vh += 15
 					viewport.height(vw);
 					viewport.width(vh-1);
-					viewport.css('top',((vh-vw)/2)-15).css('left',((vw-vh)/2));
+					$('.viewport',device).css({top:((vh-vw)/2)-15}).css({left:vx((vw-vh)/2)});
 				break;
 			}
 
 			// resize the container
 			device.width(h);
 			device.height(w);
-
-
-
-			console.info(viewport.css('top'),viewport.css('left'));
-
+			
 			// reset xy of the device body
 			x = (w-devices[type()].height)/2;
 			y = (h-devices[type()].width)/2;
