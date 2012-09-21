@@ -127,7 +127,7 @@
 			-webkit-user-select: none;
 			background-color:transparent;
 			z-index:1;
-			-webkit-transition: margin .5s;
+			-webkit-transition: margin .2s;
 		}
 
 		.device .body {
@@ -153,12 +153,12 @@
 		}
 
 		.device:hover {
-			margin-right: 145px;
+			margin-right: 15px;
 		}
 
 		.device:hover .tools {
 			opacity: .3;
-			right: -145px;
+			right: -15px;
 		}
 
 		.device .tools:hover {
@@ -560,6 +560,14 @@
 				orient(null,this.parentNode.parentNode);
 			});
 
+			$('.tools').hover(function(){
+				$(this.parentNode).css('margin-right',145);
+				$(this).css('right',-145);
+			},function(){
+				$(this.parentNode).css('margin-right',15);
+				$(this).css('right',-15);
+			});
+
 			var autoload = true;
 			var url = getQueryString()["url"] || $('#wtarget').val();
 			if (getQueryString()["autoload"] == 'false') autoload = false;
@@ -568,9 +576,6 @@
 				load(url);
 				$('#wtarget').val(url);
 			}
-			
-			
-
 			
 		});
 		
