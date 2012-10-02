@@ -277,7 +277,7 @@
 	<script language="javascript">
 
 		var devices = {
-			'iphone': {
+			'iphone4g': {
 				width: 386,
 				height: 728,
 				scale: 7
@@ -288,6 +288,69 @@
 				scale: 7
 			}
 		};
+		
+		
+		function device(device)
+		{
+			var device_html = null;
+			
+			switch(device)
+			{
+				case: 'iphone4g':
+					device_html = '
+						<div class="device ipad portrait">
+							<div class="tools">
+								<label for="ipad_scale"><b>Scale:</b></label>
+								<input type="text" class="scale" id="ipad_scale" value="7" onkeyup="scale(this.value, 'ipad');"/><br>
+				
+								<label><b>Orientation:</b></label><br>
+								<input type="radio" name="ipad_orientation" id="ipad_orientation_1" value="portrait" checked><label for="ipad_orientation_1">Portrait</label><br> 
+								<input type="radio" name="ipad_orientation" id="ipad_orientation_2" value="landscape"><label for="ipad_orientation_2">Landscape</label> 
+							</div>
+							<div class="body">
+								<header>
+									<div class="features"></div>
+								</header>
+								<div class="screen">
+									<iframe class="viewport" scrolling="vertical"></iframe>
+								</div>
+								<footer>
+									<div class="features"></div>
+								</footer>
+							</div>
+						</div>
+					';
+				break;
+			
+				case 'ipad':
+					device_html = '
+						<div class="device iphone fourg portrait">
+							<div class="tools">
+								<label for="ipad_scale"><b>Scale:</b></label>
+								<input type="text" class="scale" id="ipad_scale" value="7" onkeyup="scale(this.value, 'ipad');"/><br>
+				
+								<label><b>Orientation:</b></label><br>
+								<input type="radio" name="ipad_orientation" id="ipad_orientation_1" value="portrait" checked><label for="ipad_orientation_1">Portrait</label><br> 
+								<input type="radio" name="ipad_orientation" id="ipad_orientation_2" value="landscape"><label for="ipad_orientation_2">Landscape</label> 
+							</div>
+							<div class="body">
+								<header>
+									<div class="features"></div>
+								</header>
+								<div class="screen" style="width:'+ device.width + .'; height: '+device.height+'>
+									<iframe class="viewport" scrolling="vertical"></iframe>
+								</div>
+								<footer>
+									<div class="features"></div>
+								</footer>
+							</div>
+						</div>
+					';
+				break;
+			}
+			
+			return device_html;
+		}
 		
 		function update_url()
 		{
@@ -485,73 +548,6 @@
 		</footer>
 	</div>
 	-->
-	<div class="column">
-		<div class="device iphone fourg portrait">
-			<div class="tools">
-				<label for="iphone_scale"><b>Scale:</b></label>
-				<input type="text" class="scale" id="iphone_scale" value="7" onkeyup="scale(this.value, 'iphone');"/><br>
-
-				<label><b>Orientation:</b></label><br>
-				<input type="radio" name="iphone_orientation" id="iphone_orientation_1" value="portrait" checked onclick="orient(null,this.parentNode.parentNode);"><label for="iphone_orientation_1">Portrait</label><br> 
-				<input type="radio" name="iphone_orientation" id="iphone_orientation_2" value="landscape"><label for="iphone_orientation_2">Landscape</label> 
-			</div>
-			<div class="body">
-				<header>
-					<div class="features"></div>
-				</header>
-				<div class="screen">
-					<iframe class="viewport" scrolling="vertical"></iframe>
-				</div>
-				<footer>
-					<div class="features"></div>
-				</footer>
-			</div>
-		</div>
-		<div class="device iphone fourg portrait">
-			<div class="tools">
-				<label for="iphone_scale"><b>Scale:</b></label>
-				<input type="text" class="scale" id="iphone_scale" value="7" onkeyup="scale(this.value, 'iphone');"/><br>
-
-				<label><b>Orientation:</b></label><br>
-				<input type="radio" name="iphone_orientation" id="iphone_orientation_1" value="portrait" checked onclick="orient(null,this.parentNode.parentNode);"><label for="iphone_orientation_1">Portrait</label><br> 
-				<input type="radio" name="iphone_orientation" id="iphone_orientation_2" value="landscape"><label for="iphone_orientation_2">Landscape</label> 
-			</div>
-			<div class="body">
-				<header>
-					<div class="features"></div>
-				</header>
-				<div class="screen">
-					<iframe class="viewport" scrolling="vertical"></iframe>
-				</div>
-				<footer>
-					<div class="features"></div>
-				</footer>
-			</div>
-		</div>
-	</div>
-	<div class="column">
-		<div class="device ipad portrait">
-			<div class="tools">
-				<label for="ipad_scale"><b>Scale:</b></label>
-				<input type="text" class="scale" id="ipad_scale" value="7" onkeyup="scale(this.value, 'ipad');"/><br>
-
-				<label><b>Orientation:</b></label><br>
-				<input type="radio" name="ipad_orientation" id="ipad_orientation_1" value="portrait" checked><label for="ipad_orientation_1">Portrait</label><br> 
-				<input type="radio" name="ipad_orientation" id="ipad_orientation_2" value="landscape"><label for="ipad_orientation_2">Landscape</label> 
-			</div>
-			<div class="body">
-				<header>
-					<div class="features"></div>
-				</header>
-				<div class="screen">
-					<iframe class="viewport" scrolling="vertical"></iframe>
-				</div>
-				<footer>
-					<div class="features"></div>
-				</footer>
-			</div>
-		</div>
-	</div>
 	<div class="column">
 		<div class="device ipad portrait">
 			<div class="tools">
