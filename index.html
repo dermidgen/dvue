@@ -127,7 +127,7 @@
 			-webkit-user-select: none;
 			background-color:transparent;
 			z-index:1;
-			-webkit-transition: margin .5s;
+			-webkit-transition: margin .2s;
 		}
 
 		.device .body {
@@ -137,7 +137,7 @@
 
 		.device .tools {
 			position:absolute;
-			width: 100px;
+			width: 130px;
 			right: 5px;
 			top: 10px;
 			background-color: #aaa;
@@ -153,12 +153,12 @@
 		}
 
 		.device:hover {
-			margin-right: 125px;
+			margin-right: 15px;
 		}
 
 		.device:hover .tools {
 			opacity: .3;
-			right: -115px;
+			right: -15px;
 		}
 
 		.device .tools:hover {
@@ -169,7 +169,55 @@
 			width: 25px;
 		}
 
+		.device .tools .toggle {
+			cursor: pointer;
+		}
+
+		.device .tools .toggle .option {
+			border: 1px inset #ccc;
+			border-radius: 4px;
+			margin:0;
+			padding: 2px 4px;
+			cursor: pointer;
+			display: inline-block;
+			-webkit-transition: all .2s;
+		}
+
+		.device .tools .toggle .option.left {
+			border-top-right-radius: 0;
+			border-bottom-right-radius: 0;
+		}
+
+		.device .tools .toggle .option.right {
+			border-top-left-radius: 0;
+			border-bottom-left-radius: 0;
+		}
+
+		.device .tools .toggle.off .option.left {
+			background: #5EA563;
+			font-weight: bold;
+		}
+
+		.device .tools .toggle.off .option.right {
+			background: #ededed;
+			font-weight: normal;
+		}
+
+		.device .tools .toggle.on .option.left {
+			background: #ededed;
+			font-weight: normal;
+		}
+
+		.device .tools .toggle.on .option.right {
+			background: #5EA563;
+			font-weight: bold;
+		}
+
 		.device header .features {
+		}
+
+		.device .viewport {
+			position: relative;
 		}
 	
 		/** iPhone **/
@@ -226,6 +274,7 @@
 			height:100%;
 			border:0;
 			overflow: hidden;
+			background: #000;
 		}
 
 		.device.iphone.threegs .viewport {
@@ -268,8 +317,12 @@
 			height:100%;
 			border:0;
 			overflow: hidden;
-			width:784px; /** screen +15 to account for scrollbars **/			
+			width:783px; /** screen +15 to account for scrollbars **/			
 		}
+
+		/** {
+			-webkit-transition: all 0 !important;
+		}**/
 
 	</style>
 	<script src="http://code.jquery.com/jquery-1.8.0.min.js" type="text/javascript"></script>
@@ -382,27 +435,90 @@
 			});
 		}
 
+		function transform(em,options)
+		{
+			// Thanks to http://css-tricks.com/get-value-of-css-rotation-through-javascript/
+
+			var t = $(em).css('-webkit-transform');
+			var ts = (t == 'none') ? ['1','0','0','1','0','0'] : t.slice(7,t.length-1).split(',');
+
+			if (!options) return ts;
+			var a = parseFloat(ts[0]);
+			var b = parseFloat(ts[1]);
+			var c = parseFloat(ts[2]);
+			var d = parseFloat(ts[3]);
+
+			var scale = (!isNaN(options.scale)) ? options.scale : Math.sqrt(a*a + b*b);
+			var angle = (!isNaN(options.rotate)) ? options.rotate : Math.round(Math.atan2(b,a) * (180/Math.PI));
+
+
+			var s_scale = 'scale('+scale+')';
+			var s_rotate = 'rotate('+angle+'deg)';
+
+			$(em).css('-webkit-transform',s_scale + ' ' + s_rotate);
+
+			return { scale: scale, rotate: angle };
+		}
+
 		function orient(orientation,device)
 		{
 			device = $(device);
-			if (orientation === null) {
-				orientation = (device.hasClass('portrait')) ? 'landscape' : 'portrait';
-			}
-			console.info(orientation);
-			$('.body',device).css('-webkit-transform');
+			var viewport = $('.viewport',device);
+			var w = device.width();
+			var h = device.height();
+			var vh = viewport.height();
+			var vw = viewport.width();
+			var x = parseFloat($('.body',device).css('left'));
+			var y = parseFloat($('.body',device).css('top'));
+			var t = transform($('.body',device));
 
-			if (device.hasClass('portrait')) {
-				device.removeClass('portrait');
-				var t = $('.body',device).css('-webkit-transform');
-				console.info(t);
-				$('.body',device).css('-webkit-transform', 'rotate(0deg');
-				$('.viewport',device).css('-webkit-transform','rotate(0deg)');
+			var type = function() {
+				if (device.hasClass('iphone')) return 'iphone';
+				if (device.hasClass('ipad')) return 'ipad';
+			};
+
+			var co = function() {  // current orientation
+				return (device.hasClass('portrait')) ? 'portrait' : 'landscape'
+			};
+
+			if (orientation === null) {
+				orientation = (co() == 'portrait') ? 'landscape' : 'portrait';
 			}
-			if (device.hasClass('landscape')) {
-				device.removeClass('landscape');
-				$('.body',device).css('-webkit-transform','rotate(90deg)');
-				$('.viewport',device).css('-webkit-transform','rotate(-90deg)');
+
+			switch(orientation)
+			{
+				case "portrait":
+					device.removeClass('landscape');
+					transform(viewport,{rotate: 0});
+					t = transform($('.body',device),{rotate: 0});
+					viewport.height(vw-15);
+					viewport.width(vh+15);
+					viewport.css({top:0}).css({left:0});
+				break;
+				case "landscape":
+					device.removeClass('portrait');
+					transform(viewport,{rotate: -90});
+					t = transform($('.body',device),{rotate: 90});
+					vw -= 15;
+					vh += 15
+					viewport.height(vw);
+					viewport.width(vh-1);
+
+					var vy = ((vh-vw)/2)-15;
+					var vx = ((vw-vh)/2);
+					$('.viewport',device).css({top:vy}).css({left:vx});
+				break;
 			}
+
+			// resize the container
+			device.width(h);
+			device.height(w);
+
+			// reset xy of the device body
+			x = (w-devices[type()].height)/2;
+			y = (h-devices[type()].width)/2;
+			$('.body',device).css({top:x,left:y});
+
 			device.addClass(orientation);
 		}
 
@@ -417,9 +533,9 @@
 			var x = (w-devices[device].width)/2;
 			var y = (h-devices[device].height)/2;
 
-			console.info(x,y);
 			$('.device.'+device).css({width:w,height:h});
-			$('.body',$('.device.'+device)).css({top:y,left:x}).css('-webkit-transform','scale('+s/10+')');
+			$('.body',$('.device.'+device)).css({top:y,left:x});
+			transform($('.body',$('.device.'+device)),{scale:s/10});
 		}
 
 		function getQueryString() {
@@ -490,16 +606,38 @@
 				scale(item.scale,index);
 			});
 
-			var url = getQueryString()["url"];
-			var autoload = getQueryString()["autoload"];
+			$('input[name="iphone_orientation"]').change(function(){
 
-			if (url && autoload) {
+				orient(null,this.parentNode.parentNode);
+
+			});
+
+			$('.toggle').click(function(){
+				var e = $(this);
+				if (e.hasClass('off')) e.removeClass('off').addClass('on');
+				else if (e.hasClass('on')) e.removeClass('on').addClass('off');
+			});
+
+			$('.toggle.orientation').click(function(){
+				orient(null,this.parentNode.parentNode);
+			});
+
+			$('.tools').hover(function(){
+				$(this.parentNode).css('margin-right',145);
+				$(this).css('right',-145);
+			},function(){
+				$(this.parentNode).css('margin-right',15);
+				$(this).css('right',-15);
+			});
+
+			var autoload = true;
+			var url = getQueryString()["url"] || $('#wtarget').val();
+			if (getQueryString()["autoload"] == 'false') autoload = false;
+
+			if (autoload) {
 				load(url);
 				$('#wtarget').val(url);
 			}
-			
-			
-
 			
 		});
 		
@@ -535,28 +673,16 @@
 			</div>
 		</div>
 	</header>
-	<!--
-	<div class="device iphone threegs">
-		<header>
-			<div class="features"></div>
-		</header>
-		<div class="screen">
-			<iframe class="viewport" scrolling="yes"></iframe>
-		</div>
-		<footer>
-			<div class="features"></div>
-		</footer>
-	</div>
-	-->
 	<div class="column">
 		<div class="device ipad portrait">
 			<div class="tools">
 				<label for="ipad_scale"><b>Scale:</b></label>
 				<input type="text" class="scale" id="ipad_scale" value="7" onkeyup="scale(this.value, 'ipad');"/><br>
 
-				<label><b>Orientation:</b></label><br>
-				<input type="radio" name="ipad_orientation" id="ipad_orientation_1" value="portrait" checked><label for="ipad_orientation_1">Portrait</label><br> 
-				<input type="radio" name="ipad_orientation" id="ipad_orientation_2" value="landscape"><label for="ipad_orientation_2">Landscape</label> 
+				<label><b>Orientation:</b></label>
+				<div class="toggle off orientation">
+					<div class="option left">Portrait</div><div class="option right">Landscape</div>
+				</div> 
 			</div>
 			<div class="body">
 				<header>
