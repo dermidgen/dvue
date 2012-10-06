@@ -541,7 +541,10 @@
 
 		$(document).ready(function(){
 			$.each(devices,function(index,item){
-				scale(item.scale,index);
+				if($('.body',$('.device.'+index)).length != 0)
+				{
+					scale(item.scale,index);
+				}
 			});
 
 			$('input[name="iphone_orientation"]').change(function(){
